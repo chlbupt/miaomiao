@@ -4,80 +4,21 @@
             <div class="city_hot">
                 <h2>热门城市</h2>
                 <ul class="clearfix">
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                    <li>北京</li>
-                    <li>上海</li>
-                    <li>北京</li>
+                    <li v-for="item in hotList" :key="item.id">{{item.nm}}</li>
                 </ul>
             </div>
-            <div class="city_sort">
-                <div>
-                    <h2>A</h2>
+            <div class="city_sort" ref="city_sort">
+                <div v-for="item in cityList" :key="item.index">
+                    <h2>{{item.index}}</h2>
                     <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
+                        <li v-for="line in item.list" :key="line.id">{{line.nm}}</li>
                     </ul>
                 </div>
-                <div>
-                    <h2>B</h2>
-                    <ul>
-                        <li>北京</li>
-                        <li>保定</li>
-                        <li>蚌埠</li>
-                        <li>包头</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>B</h2>
-                    <ul>
-                        <li>北京</li>
-                        <li>保定</li>
-                        <li>蚌埠</li>
-                        <li>包头</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>A</h2>
-                    <ul>
-                        <li>阿拉善盟</li>
-                        <li>鞍山</li>
-                        <li>安庆</li>
-                        <li>安阳</li>
-                    </ul>
-                </div>
-                <div>
-                    <h2>B</h2>
-                    <ul>
-                        <li>北京</li>
-                        <li>保定</li>
-                        <li>蚌埠</li>
-                        <li>包头</li>
-                    </ul>
-                </div>	
             </div>
         </div>
         <div class="city_index">
             <ul>
-                <li>A</li>
-                <li>B</li>
-                <li>C</li>
-                <li>D</li>
-                <li>E</li>
+                <li v-for="(item, index) in cityList" :key="item.index" @touchstart="handleIndex(index)">{{item.index}}</li>
             </ul>
         </div>
     </div>
@@ -85,7 +26,72 @@
 
 <script>
 export default {
-    name: 'city'
+    name: 'city',
+    data(){
+        return {
+            cityList: [],
+            hotList: []
+        };
+    },
+    created(){
+        this.axios
+        .get('/api/citylist')
+        .then((res) => {
+            var msg = res.data.msg;
+            if(msg === 'ok'){
+                var cities = res.data.data.cities;
+                var {cityList, hotList} = this.formatCityList(cities);
+                this.cityList = cityList;
+                this.hotList = hotList;
+            }
+        })
+        .catch(err => {
+            console.log(err);
+        });
+    },
+    methods:{
+        handleIndex(index){
+            var h2 = this.$refs.city_sort.getElementsByTagName('h2');
+            this.$refs.city_sort.parentNode.scrollTop = h2[index].offsetTop;
+        },
+        formatCityList(cities){
+            var cityList = [], hotList = [];
+            cities.forEach((v, i) => {
+                var firstLetter = v.py.substring(0,1).toUpperCase();
+                var index = inArray(firstLetter);
+                if(index  !== false){
+                    cityList[index].list.push({'nm': v.nm, 'id': v.id});
+                }else{
+                    cityList.push({'index': firstLetter, list: [{'nm': v.nm, 'id': v.id}]});
+                }
+                if(v.isHot === 1){
+                    hotList.push(v);
+                }
+            });
+            cityList.sort((n, m) => {
+                if(n.index > m.index){
+                    return 1;
+                }else if(n.index < m.index){
+                    return -1;
+                }else{
+                    return 0;
+                }
+            });
+            // console.log(cityList, hotList);
+            function inArray(firstLetter){
+                for(var i=0,len=cityList.length;i<len;i++){
+                    if(firstLetter === cityList[i].index){
+                        return i;
+                    }
+                }
+                return false;
+            }
+            return {
+                cityList,
+                hotList
+            };
+        }
+    }
 }
 </script>
 
