@@ -4,9 +4,9 @@
         <Scroller v-else>
         <ul>
             <li v-for="item in comingSoon" :key="item.id">
-                <div class="pic_show"><img :src="item.img | setWH('128.180')"></div>
+                <div class="pic_show" @tap="handleDetail(item.id)"><img :src="item.img | setWH('128.180')"></div>
                 <div class="info_list">
-                    <h2>{{item.nm}} <img src="@/assets/max.png" v-show="item.version" /> </h2>
+                    <h2 @tap="handleDetail(item.id)">{{item.nm}} <img src="@/assets/max.png" v-show="item.version" /> </h2>
                     <p><span class="person">{{item.wish}}</span> 人想看</p>
                     <p>主演: {{item.star}}</p>
                     <p>{{item.showInfo}}上映</p>
@@ -28,6 +28,11 @@ export default {
             comingSoon: [],
             isLoading: true,
             prevCityId: -1
+        }
+    },
+    methods:{
+        handleDetail(movieId){
+            this.$router.push('/movie/detail/2/' + movieId);
         }
     },
     activated(){

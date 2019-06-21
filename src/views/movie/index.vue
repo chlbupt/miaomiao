@@ -21,8 +21,8 @@
         </div>
         
         <TabBar />
+        <router-view name="detail" />
     </div>
-    
 </template>
 
 <script>
