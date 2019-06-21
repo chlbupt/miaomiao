@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import Header from '@/components/header'
+import Header from '@/components/Header'
 import TabBar from '@/components/tabBar'
 import CinemaList from '@/components/cinemaList'
 export default {
