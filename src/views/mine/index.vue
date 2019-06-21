@@ -9,7 +9,7 @@
 </template>
 
 <script>
-import Header from '@/components/header'
+import Header from '@/components/Header'
 import TabBar from '@/components/tabBar'
 import Login from '@/components/login'
 export default {

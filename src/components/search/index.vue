@@ -30,7 +30,7 @@ export default {
     data(){
         return {
             message: '',
-            movieList: []
+            movieList: [],
         }
     },
     methods:{
@@ -42,11 +42,12 @@ export default {
     },
     watch:{
         message(newVal){
+            var cityId = this.$store.state.city.id;
             this.cancelRequest();
             this.axios
             .get('/api/searchList', {
                 params:{
-                    cityId: 10,
+                    cityId: cityId,
                     kw: newVal
                 },
                 cancelToken: new this.axios.CancelToken(c => {
